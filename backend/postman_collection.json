@@ -1,0 +1,850 @@
+{
+  "info": {
+    "name": "Housing & Roommate Management Platform API",
+    "description": "Complete API collection for the Housing & Roommate Management Platform backend.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api/v1"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "propertyId",
+      "value": ""
+    },
+    {
+      "key": "roomId",
+      "value": ""
+    },
+    {
+      "key": "applicationId",
+      "value": ""
+    },
+    {
+      "key": "leaseId",
+      "value": ""
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Tenant\",\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123\",\n  \"role\": \"TENANT\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Google Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/google",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idToken\": \"<google-id-token>\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/refresh",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/logout"
+          }
+        },
+        {
+          "name": "Get Me",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/auth/me"
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/forgot-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/reset-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"<token-from-email-link>\",\n  \"newPassword\": \"NewPassword123\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "My Profile",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/users/me/profile"
+          }
+        },
+        {
+          "name": "List Users (Admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/users"
+          }
+        },
+        {
+          "name": "Ban/Unban User (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/users/:id/ban",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isBanned\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Verify User (Admin)",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/users/:id/verify"
+          }
+        },
+        {
+          "name": "Update User Role (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/users/:id/role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"OWNER\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Properties",
+      "item": [
+        {
+          "name": "My Properties (Owner)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/properties/my"
+          }
+        },
+        {
+          "name": "Create Property (Owner)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/properties",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sunrise Apartments\",\n  \"address\": \"123 Gulshan Ave\",\n  \"city\": \"Dhaka\",\n  \"type\": \"APARTMENT\",\n  \"amenities\": [\"wifi\", \"parking\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "List Properties (Public)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/properties?city=Dhaka"
+          }
+        },
+        {
+          "name": "Get Property By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/properties/{{propertyId}}"
+          }
+        },
+        {
+          "name": "Update Property",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/properties/{{propertyId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sunrise Apartments Updated\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Property",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/properties/{{propertyId}}"
+          }
+        },
+        {
+          "name": "Upload Property Images",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/properties/{{propertyId}}/images",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "images",
+                  "type": "file"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Active Tenants for Property",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/properties/{{propertyId}}/tenants"
+          }
+        },
+        {
+          "name": "Assign Manager",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/properties/{{propertyId}}/manager",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"manager@example.com\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Remove Manager",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/properties/{{propertyId}}/manager"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rooms",
+      "item": [
+        {
+          "name": "Create Room",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/properties/{{propertyId}}/rooms",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roomNo\": \"A-101\",\n  \"rentAmount\": 12000,\n  \"capacity\": 2,\n  \"roomType\": \"SHARED\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List Rooms For Property",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/properties/{{propertyId}}/rooms"
+          }
+        },
+        {
+          "name": "Get Room By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/rooms/{{roomId}}"
+          }
+        },
+        {
+          "name": "Update Room",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/rooms/{{roomId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rentAmount\": 13000\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Room",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/rooms/{{roomId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Roommate Matching",
+      "item": [
+        {
+          "name": "Upsert Roommate Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/roommates/profile",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"budgetMin\": 8000,\n  \"budgetMax\": 15000,\n  \"gender\": \"any\",\n  \"lifestyleTags\": [\"non-smoker\", \"night-owl\"],\n  \"preferredLocation\": \"Dhaka\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get My Roommate Profile",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/roommates/profile"
+          }
+        },
+        {
+          "name": "Get Roommate Matches",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/roommates/matches"
+          }
+        },
+        {
+          "name": "Get Room Matches",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/roommates/room-matches"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Viewing Requests",
+      "item": [
+        {
+          "name": "Create Viewing Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/viewing-requests",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"propertyId\": \"{{propertyId}}\",\n  \"roomId\": \"{{roomId}}\",\n  \"requestedDate\": \"2026-09-10T10:00:00Z\"\n}"
+            }
+          }
+        },
+        {
+          "name": "My Viewing Requests",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/viewing-requests/my"
+          }
+        },
+        {
+          "name": "Property Viewing Requests",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/viewing-requests/property/{{propertyId}}"
+          }
+        },
+        {
+          "name": "Update Viewing Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/viewing-requests/:id/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"APPROVED\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Applications",
+      "item": [
+        {
+          "name": "Apply To Room",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/applications",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roomId\": \"{{roomId}}\",\n  \"message\": \"Interested in moving in next month\"\n}"
+            }
+          }
+        },
+        {
+          "name": "My Applications",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/applications/my"
+          }
+        },
+        {
+          "name": "Applications For Property",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/applications/property/{{propertyId}}"
+          }
+        },
+        {
+          "name": "Review Application (Approve/Reject)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/applications/{{applicationId}}/review",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"APPROVED\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Leases",
+      "item": [
+        {
+          "name": "My Leases",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/leases/my"
+          }
+        },
+        {
+          "name": "Leases For Property (Owner)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/leases/property/{{propertyId}}"
+          }
+        },
+        {
+          "name": "Get Lease By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/leases/{{leaseId}}"
+          }
+        },
+        {
+          "name": "Terminate Lease",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/leases/{{leaseId}}/terminate"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rent Payments",
+      "item": [
+        {
+          "name": "Generate Rent Schedule",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/rent-payments/lease/{{leaseId}}/generate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"months\": 12\n}"
+            }
+          }
+        },
+        {
+          "name": "List Rent Payments For Lease",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/rent-payments/lease/{{leaseId}}"
+          }
+        },
+        {
+          "name": "Pay Rent (Initiate SSLCommerz)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/rent-payments/:id/pay"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Utility Bills",
+      "item": [
+        {
+          "name": "Create Utility Bill (auto-split)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/utility-bills",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"propertyId\": \"{{propertyId}}\",\n  \"billType\": \"ELECTRICITY\",\n  \"totalAmount\": 1500,\n  \"month\": \"2026-09\",\n  \"tenantIds\": [\"<tenant-id-1>\", \"<tenant-id-2>\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "List Bills For Property",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/utility-bills/property/{{propertyId}}"
+          }
+        },
+        {
+          "name": "My Bill Splits",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/utility-bills/my-splits"
+          }
+        },
+        {
+          "name": "Pay Bill Split",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/utility-bills/splits/:id/pay"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Maintenance",
+      "item": [
+        {
+          "name": "Create Maintenance Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/maintenance",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roomId\": \"{{roomId}}\",\n  \"title\": \"Leaking faucet\",\n  \"description\": \"Bathroom faucet has been leaking for 2 days\",\n  \"priority\": \"MEDIUM\"\n}"
+            }
+          }
+        },
+        {
+          "name": "My Maintenance Requests",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/maintenance/my"
+          }
+        },
+        {
+          "name": "Property Maintenance Requests",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/maintenance/property/{{propertyId}}"
+          }
+        },
+        {
+          "name": "Update Maintenance Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/maintenance/:id/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_PROGRESS\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Documents",
+      "item": [
+        {
+          "name": "Upload Document",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/documents",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file"
+                },
+                {
+                  "key": "type",
+                  "value": "NID",
+                  "type": "text"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "My Documents",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/documents/my"
+          }
+        },
+        {
+          "name": "Get Document By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/documents/:id"
+          }
+        },
+        {
+          "name": "Delete Document",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/documents/:id"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "My Notifications",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/notifications"
+          }
+        },
+        {
+          "name": "Mark As Read",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/notifications/:id/read"
+          }
+        },
+        {
+          "name": "Mark All As Read",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/notifications/read-all"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "My Payments",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/payments/my"
+          }
+        },
+        {
+          "name": "Payment Success Callback",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/payments/success?tran_id=TXN-xxx&val_id=xxx"
+          }
+        },
+        {
+          "name": "Payment Fail Callback",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/payments/fail?tran_id=TXN-xxx"
+          }
+        },
+        {
+          "name": "Payment Cancel Callback",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/payments/cancel?tran_id=TXN-xxx"
+          }
+        },
+        {
+          "name": "Payment IPN",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/payments/ipn"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Owner Dashboard",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dashboard/owner"
+          }
+        },
+        {
+          "name": "Admin Dashboard",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dashboard/admin"
+          }
+        }
+      ]
+    }
+  ]
+}
