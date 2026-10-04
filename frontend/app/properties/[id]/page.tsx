@@ -5,6 +5,8 @@ import { useParams } from "next/navigation";
 import { api, getErrorMessage } from "@/lib/api";
 import { Property, Room } from "@/lib/types";
 import { useAuth } from "@/lib/auth-context";
+import Image from "next/image";
+import { getPropertyImage } from "@/lib/property-images";
 import Loader from "@/components/Loader";
 import Badge from "@/components/Badge";
 import { MapPin, Users, BedDouble } from "lucide-react";
@@ -71,19 +73,24 @@ export default function PropertyDetailPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
-      <div className="h-56 bg-gray-100 rounded-xl mb-6 flex items-center justify-center overflow-hidden">
-        {property.images?.[0] ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={property.images[0]} alt={property.title} className="w-full h-full object-cover" />
-        ) : (
-          <span className="text-gray-300">No image</span>
-        )}
+      <div className="h-64 sm:h-80 rounded-2xl mb-6 overflow-hidden relative shadow-md">
+        <Image
+          src={property.images?.[0] || getPropertyImage(property.id, 1200)}
+          alt={property.title}
+          fill
+          sizes="100vw"
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+        <div className="absolute bottom-4 left-5 text-white">
+          <p className="text-xs font-medium uppercase tracking-wider text-white/80 flex items-center gap-1">
+            <MapPin size={12} /> {property.city || property.address}
+          </p>
+          <h1 className="text-2xl sm:text-3xl font-bold drop-shadow">{property.title}</h1>
+        </div>
       </div>
 
-      <h1 className="text-2xl font-bold mb-1">{property.title}</h1>
-      <p className="text-gray-500 flex items-center gap-1 mb-3">
-        <MapPin size={16} /> {property.address}
-      </p>
       {property.description && <p className="text-gray-600 mb-4">{property.description}</p>}
 
       {property.amenities?.length > 0 && (

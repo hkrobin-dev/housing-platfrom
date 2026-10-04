@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { HERO_PHOTOS } from "@/lib/property-images";
 import {
   Search,
   Users,
@@ -145,6 +147,32 @@ export default function HomePage() {
               <div key={s.label} className="bg-white/70 backdrop-blur rounded-2xl border border-gray-100 py-4 shadow-sm">
                 <div className="text-2xl font-extrabold text-gray-900">{s.value}</div>
                 <div className="text-xs text-gray-500 mt-0.5">{s.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Photo collage */}
+          <div
+            className="animate-fade-in-up mt-10 grid grid-cols-3 gap-3 sm:gap-4 max-w-3xl mx-auto"
+            style={{ animationDelay: "480ms" }}
+          >
+            {HERO_PHOTOS.map((src, i) => (
+              <div
+                key={src}
+                className={`relative rounded-2xl overflow-hidden shadow-lg ${i === 1 ? "sm:-mt-6" : "sm:mt-6"}`}
+              >
+                <Image
+                  src={src}
+                  alt="Featured rental home"
+                  width={600}
+                  height={i === 1 ? 520 : 440}
+                  className="w-full h-44 sm:h-64 object-cover hover:scale-105 transition-transform duration-500"
+                />
+                {i === 1 && (
+                  <span className="absolute bottom-3 left-3 badge bg-white/90 backdrop-blur text-brand-700 shadow">
+                    ★ 4.9 · 2k reviews
+                  </span>
+                )}
               </div>
             ))}
           </div>

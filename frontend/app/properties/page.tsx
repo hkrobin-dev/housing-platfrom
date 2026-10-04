@@ -3,12 +3,14 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { api, getErrorMessage } from "@/lib/api";
 import { Property } from "@/lib/types";
+import { getPropertyImage } from "@/lib/property-images";
 import Loader from "@/components/Loader";
 import SkeletonGrid from "@/components/Skeleton";
 import EmptyState from "@/components/EmptyState";
-import { MapPin, Home as HomeIcon, ArrowRight } from "lucide-react";
+import { MapPin, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function PropertiesPage() {
@@ -87,17 +89,14 @@ function PropertiesContent() {
               className="card !p-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-200 block overflow-hidden animate-fade-in-up group"
               style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}
             >
-              <div className="h-44 bg-gradient-to-br from-brand-50 to-gray-100 rounded-xl mb-3 flex items-center justify-center overflow-hidden relative">
-                {p.images?.[0] ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={p.images[0]}
-                    alt={p.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <HomeIcon className="text-brand-100" size={44} />
-                )}
+              <div className="h-44 rounded-xl mb-3 overflow-hidden relative bg-gray-100">
+                <Image
+                  src={p.images?.[0] || getPropertyImage(p.id)}
+                  alt={p.title}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                />
                 <span className="absolute top-2.5 left-2.5 badge bg-white/90 backdrop-blur text-brand-700 shadow-sm">
                   {p.rooms?.length || 0} room{(p.rooms?.length || 0) !== 1 ? "s" : ""}
                 </span>
