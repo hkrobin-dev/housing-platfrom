@@ -11,7 +11,7 @@ cp .env.local.example .env.local     # set NEXT_PUBLIC_API_URL to your backend U
 npm run dev                          # http://localhost:3000
 ```
 
-Make sure the backend (`housing-platform-complete.zip`) is running first — this app talks
+Make sure the backend (`../backend`, http://localhost:5000) is running first — this app talks
 to it via `NEXT_PUBLIC_API_URL` (defaults to `http://localhost:5000/api/v1`).
 
 ## What's included
@@ -32,8 +32,8 @@ to it via `NEXT_PUBLIC_API_URL` (defaults to `http://localhost:5000/api/v1`).
 - **Payment result pages**: `/payments/success`, `/fail`, `/cancel` — these are exactly
   the URLs the backend's SSLCommerz callback redirects the browser to
 - **AI Assistant** (`components/ChatWidget.tsx`): floating chat button on every page,
-  calls `POST /api/v1/assistant/chat` on the backend, which itself calls Claude
-  (Anthropic API) with a system prompt describing the platform and a live snapshot of
+  calls `POST /api/v1/assistant/chat` on the backend, which itself calls Gemini
+  (Google Generative Language API) with a system prompt describing the platform and a live snapshot of
   available rooms so answers reference real listings
 
 ## Structure
@@ -63,12 +63,11 @@ lib/                             api client (axios + refresh), auth context, sha
 
 ## Notes / things to tighten before submission
 
-- `dashboard/properties` fetches the public `/properties` list rather than a dedicated
-  "my properties" endpoint (the backend doesn't have one yet) — fine for a demo/small
-  catalog, but for a large one add a `GET /properties/my` endpoint and swap it in.
+- `dashboard/properties` fetches the owner/manager-scoped `GET /properties/my`
+  endpoint (public browsing uses the cached public `GET /properties` list).
 - File upload UI (property images, documents) posts directly to the backend's
   Cloudinary-backed endpoints — make sure `CLOUDINARY_*` env vars are set on the backend.
-- The AI chat widget requires `ANTHROPIC_API_KEY` to be set in the **backend's** `.env`
+- The AI chat widget requires `GEMINI_API_KEY` to be set in the **backend's** `.env`
   — without it, the widget will show a friendly fallback error message.
 - Styling is intentionally simple/functional (Tailwind utility classes) — swap in your
   own design system or component library if the assignment expects more polish.

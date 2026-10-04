@@ -2,8 +2,8 @@ import axios from "axios";
 import { prisma } from "../../config/db";
 import { ApiError } from "../../utils/apiError";
 
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-const MODEL = "claude-sonnet-4-6";
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const MODEL = process.env.GEMINI_MODEL || "gemini-flash-latest";
 
 const SYSTEM_PROMPT = `You are the in-app assistant for a Housing & Roommate Management Platform.
 You help users: find properties/rooms that match their budget and area, understand how
@@ -18,13 +18,13 @@ interface ChatMessage {
 }
 
 /**
- * Calls Claude via the Anthropic Messages API. Optionally grounds the answer
- * with a lightweight snapshot of currently available rooms so recommendations
- * are based on real listings, not hallucinated ones.
+ * Calls Gemini via the Generative Language REST API. Optionally grounds the
+ * answer with a lightweight snapshot of currently available rooms so
+ * recommendations are based on real listings, not hallucinated ones.
  */
 export async function chatWithAssistant(userId: string | undefined, message: string, history: ChatMessage[] = []) {
-  if (!ANTHROPIC_API_KEY) {
-    throw ApiError.internal("AI assistant is not configured. Set ANTHROPIC_API_KEY in .env");
+  if (!GEMINI_API_KEY) {
+    throw ApiError.internal("AI assistant is not configured. Set GEMINI_API_KEY in .env");
   }
 
   // Ground with a small snapshot of available rooms so the assistant can make real suggestions
@@ -45,28 +45,63 @@ export async function chatWithAssistant(userId: string | undefined, message: str
     ? `\n\nHere are some currently available rooms you can reference when relevant:\n${context}`
     : "";
 
-  const messages = [
-    ...history.map((h) => ({ role: h.role, content: h.content })),
-    { role: "user", content: message },
-  ];
-
-  const { data } = await axios.post(
-    "https://api.anthropic.com/v1/messages",
-    {
-      model: MODEL,
-      max_tokens: 600,
-      system: SYSTEM_PROMPT + contextBlock,
-      messages,
-    },
-    {
-      headers: {
-        "x-api-key": ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-        "Content-Type": "application/json",
-      },
+  // Gemini uses "model" instead of "assistant", requires the first message to be
+  // from the user, and prefers alternating roles — normalize the history.
+  const contents: Array<{ role: "user" | "model"; parts: Array<{ text: string }> }> = [];
+  for (const h of history) {
+    const role = h.role === "assistant" ? "model" : "user";
+    const last = contents[contents.length - 1];
+    if (last && last.role === role) {
+      last.parts[0].text += `\n${h.content}`;
+    } else {
+      contents.push({ role, parts: [{ text: h.content }] });
     }
-  );
+  }
+  while (contents.length > 0 && contents[0].role !== "user") contents.shift();
+  const last = contents[contents.length - 1];
+  if (last && last.role === "user") {
+    last.parts[0].text += `\n${message}`;
+  } else {
+    contents.push({ role: "user", parts: [{ text: message }] });
+  }
 
-  const reply = data.content?.find((c: { type: string }) => c.type === "text")?.text || "";
+  let data;
+  try {
+    const res = await axios.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
+      {
+        system_instruction: { parts: [{ text: SYSTEM_PROMPT + contextBlock }] },
+        contents,
+        generationConfig: { maxOutputTokens: 600 },
+      },
+      {
+        headers: {
+          "x-goog-api-key": GEMINI_API_KEY,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    data = res.data;
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      const status = err.response?.status;
+      const apiMessage =
+        (err.response?.data as { error?: { message?: string } })?.error?.message || err.message;
+      if (status === 400 || status === 401 || status === 403) {
+        throw ApiError.internal(`AI assistant request rejected (${status}): ${apiMessage}`);
+      }
+      if (status === 429) {
+        throw ApiError.internal("AI assistant is rate-limited right now, please try again shortly.");
+      }
+      throw ApiError.internal(`AI assistant request failed: ${apiMessage}`);
+    }
+    throw err;
+  }
+
+  const reply =
+    data.candidates?.[0]?.content?.parts
+      ?.map((p: { text?: string }) => p.text || "")
+      .join("")
+      .trim() || "";
   return { reply };
 }

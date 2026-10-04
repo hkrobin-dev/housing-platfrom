@@ -42,6 +42,14 @@ services:
         sync: false
       - key: CLIENT_URL
         sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
 
 databases:
   - name: housing-platform-db

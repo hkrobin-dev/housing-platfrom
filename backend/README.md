@@ -4,7 +4,7 @@ A complete backend for a housing/roommate marketplace: property & room listings,
 
 ## Tech Stack
 
-Node.js · TypeScript · Express.js · PostgreSQL · Prisma · Zod · JWT + Google OAuth · Multer + Cloudinary · SSLCommerz · ESLint/Prettier
+Node.js · TypeScript · Express.js · PostgreSQL · Prisma · Zod · JWT + Google OAuth · Multer + Cloudinary · SSLCommerz · Resend (email, optional) · Redis cache (optional) · Google Gemini (AI assistant) · ESLint/Prettier
 
 ## Setup
 
@@ -53,22 +53,23 @@ ADMIN_PASSWORD=Admin@12345
 See `postman_collection.json` for the full, importable collection with example bodies. Summary:
 
 ```
-/api/v1/auth                    register, login, google, refresh, logout, me
-/api/v1/users                   profile, admin user list
-/api/v1/properties               CRUD + image upload
+/api/v1/auth                    register, login, google, refresh, logout, me, forgot/reset-password, verify-email
+/api/v1/users                   profile, admin list, ban/verify/role
+/api/v1/properties               CRUD + image upload + /my + /:id/tenants + /:id/manager assign/remove
 /api/v1/properties/:id/rooms     nested room list/create
-/api/v1/rooms                    room get/update/delete
+/api/v1/rooms                    room get/update/delete, reserve/release seat
 /api/v1/roommates                profile, roommate matches, room matches
 /api/v1/viewing-requests         create, my, property list, status update
 /api/v1/applications             apply, my, property list, review→approve (creates Lease)
-/api/v1/leases                   my, get, terminate
+/api/v1/leases                   my, get, property list, terminate
 /api/v1/rent-payments            generate schedule, list, pay (SSLCommerz)
 /api/v1/utility-bills            create+split, property list, my splits, pay split
 /api/v1/maintenance              create, my, property list, status update
-/api/v1/documents                upload, my, get
+/api/v1/documents                upload, my, get, delete
 /api/v1/notifications            list, mark read
 /api/v1/payments                 my payments, SSLCommerz success/fail/cancel/IPN callbacks
 /api/v1/dashboard                owner stats, admin stats
+/api/v1/assistant                AI chat (Google Gemini, needs GEMINI_API_KEY)
 ```
 
 ## Recently Closed Gaps
@@ -155,7 +156,7 @@ wherever multiple writes must succeed or fail together.
 `render.yaml` is included — connect the repo in Render, it provisions a free Postgres
 instance and the web service, and reads `DATABASE_URL` etc. from environment variables
 you set in the Render dashboard (marked `sync: false` so secrets aren't committed).
-Build: `prisma generate && tsc`. Start: `prisma migrate deploy && node dist/server.js`.
+Build: `prisma generate && tsc`. Start: `prisma migrate deploy && npm start` (`node dist/src/server.js`).
 
 ## Assignment Requirement Checklist
 

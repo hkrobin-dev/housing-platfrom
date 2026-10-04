@@ -2,7 +2,7 @@
   "name": "housing-roommate-platform",
   "version": "1.0.0",
   "description": "Housing & Roommate Management Platform Backend",
-  "main": "dist/server.js",
+  "main": "dist/src/server.js",
   "scripts": {
     "dev": "nodemon --exec ts-node src/server.ts",
     "build": "tsc",

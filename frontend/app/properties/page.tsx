@@ -6,7 +6,9 @@ import Link from "next/link";
 import { api, getErrorMessage } from "@/lib/api";
 import { Property } from "@/lib/types";
 import Loader from "@/components/Loader";
-import { MapPin, Home as HomeIcon } from "lucide-react";
+import SkeletonGrid from "@/components/Skeleton";
+import EmptyState from "@/components/EmptyState";
+import { MapPin, Home as HomeIcon, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function PropertiesPage() {
@@ -63,28 +65,52 @@ function PropertiesContent() {
       </form>
 
       {loading ? (
-        <Loader label="Loading properties..." />
+        <SkeletonGrid count={6} />
       ) : properties.length === 0 ? (
-        <p className="text-gray-500">No properties found. Try a different city.</p>
+        <div className="card">
+          <EmptyState
+            title="No properties found"
+            message="Try a different city, or clear the filter to browse everything."
+            actionLabel="Clear filter"
+            onAction={() => {
+              setCity("");
+              router.push("/properties");
+            }}
+          />
+        </div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {properties.map((p) => (
-            <Link key={p.id} href={`/properties/${p.id}`} className="card hover:shadow-md transition block">
-              <div className="h-36 bg-gray-100 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+          {properties.map((p, i) => (
+            <Link
+              key={p.id}
+              href={`/properties/${p.id}`}
+              className="card !p-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-200 block overflow-hidden animate-fade-in-up group"
+              style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}
+            >
+              <div className="h-44 bg-gradient-to-br from-brand-50 to-gray-100 rounded-xl mb-3 flex items-center justify-center overflow-hidden relative">
                 {p.images?.[0] ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={p.images[0]} alt={p.title} className="w-full h-full object-cover" />
+                  <img
+                    src={p.images[0]}
+                    alt={p.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
                 ) : (
-                  <HomeIcon className="text-gray-300" size={32} />
+                  <HomeIcon className="text-brand-100" size={44} />
                 )}
+                <span className="absolute top-2.5 left-2.5 badge bg-white/90 backdrop-blur text-brand-700 shadow-sm">
+                  {p.rooms?.length || 0} room{(p.rooms?.length || 0) !== 1 ? "s" : ""}
+                </span>
               </div>
-              <h3 className="font-semibold mb-1">{p.title}</h3>
+              <h3 className="font-semibold mb-1 group-hover:text-brand-600 transition-colors line-clamp-1">
+                {p.title}
+              </h3>
               <p className="text-sm text-gray-500 flex items-center gap-1 mb-2">
-                <MapPin size={14} /> {p.city || p.address}
+                <MapPin size={14} className="text-brand-500 shrink-0" /> {p.city || p.address}
               </p>
-              <p className="text-xs text-gray-400">
-                {p.rooms?.length || 0} room{(p.rooms?.length || 0) !== 1 ? "s" : ""} listed
-              </p>
+              <span className="text-xs font-medium text-brand-600 inline-flex items-center gap-1">
+                View details <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
+              </span>
             </Link>
           ))}
         </div>

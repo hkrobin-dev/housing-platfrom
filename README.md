@@ -19,7 +19,7 @@ npm run install:all
 # 2. Configure environment
 cp backend/.env.example backend/.env              # fill in DATABASE_URL, JWT secrets,
                                                     # Cloudinary, SSLCommerz, Google OAuth,
-                                                    # and ANTHROPIC_API_KEY for the AI assistant
+                                                    # and GEMINI_API_KEY for the AI assistant
 cp frontend/.env.local.example frontend/.env.local # NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
 
 # 3. Set up the database
@@ -39,7 +39,7 @@ npm run dev:frontend   # http://localhost:3000
   reservation), roommate matching, viewing requests, applications → lease workflow
   (transaction-safe approval), rent scheduling, utility bill splitting, maintenance,
   documents, notifications, SSLCommerz payments, admin/owner dashboards, and an AI
-  assistant endpoint backed by the Anthropic API
+  assistant endpoint backed by the Google Gemini API
 - `prisma/schema.prisma` — full relational schema
 - `postman_collection.json` — importable API documentation
 - `render.yaml` — deployment config
