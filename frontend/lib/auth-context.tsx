@@ -10,9 +10,9 @@ import toast from "react-hot-toast";
 interface AuthContextValue {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string, role: Role) => Promise<void>;
-  loginWithGoogle: (idToken: string) => Promise<void>;
+  login: (email: string, password: string, redirectTo?: string) => Promise<void>;
+  register: (name: string, email: string, password: string, role: Role, redirectTo?: string) => Promise<void>;
+  loginWithGoogle: (idToken: string, redirectTo?: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -52,36 +52,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(sessionUser);
   }
 
-  async function login(email: string, password: string) {
+  function safeRedirect(to?: string) {
+    return to && to.startsWith("/") && !to.startsWith("//") ? to : "/dashboard";
+  }
+
+  async function login(email: string, password: string, redirectTo?: string) {
     try {
       const { data } = await api.post("/auth/login", { email, password });
       persistSession(data.data.accessToken, data.data.refreshToken, data.data.user);
       toast.success("Logged in successfully");
-      router.push("/dashboard");
+      router.push(safeRedirect(redirectTo));
     } catch (err) {
       toast.error(getErrorMessage(err));
       throw err;
     }
   }
 
-  async function register(name: string, email: string, password: string, role: Role) {
+  async function register(name: string, email: string, password: string, role: Role, redirectTo?: string) {
     try {
       const { data } = await api.post("/auth/register", { name, email, password, role });
       persistSession(data.data.accessToken, data.data.refreshToken, data.data.user);
       toast.success("Account created successfully");
-      router.push("/dashboard");
+      router.push(safeRedirect(redirectTo));
     } catch (err) {
       toast.error(getErrorMessage(err));
       throw err;
     }
   }
 
-  async function loginWithGoogle(idToken: string) {
+  async function loginWithGoogle(idToken: string, redirectTo?: string) {
     try {
       const { data } = await api.post("/auth/google", { idToken });
       persistSession(data.data.accessToken, data.data.refreshToken, data.data.user);
       toast.success("Logged in with Google successfully");
-      router.push("/dashboard");
+      router.push(safeRedirect(redirectTo));
     } catch (err) {
       toast.error(getErrorMessage(err));
       throw err;

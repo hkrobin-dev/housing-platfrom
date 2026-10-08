@@ -10,6 +10,10 @@ import clsx from "clsx";
 const PUBLIC_LINKS = [
   { href: "/properties", label: "Browse" },
   { href: "/roommates", label: "Roommates", icon: Users },
+  { href: "/services", label: "Services" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export default function Navbar() {

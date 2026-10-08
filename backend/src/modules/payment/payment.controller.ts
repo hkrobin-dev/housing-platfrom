@@ -9,6 +9,11 @@ export const listMyPayments = catchAsync(async (req: Request, res: Response) => 
   return sendSuccess(res, { message: "Payments fetched successfully", data: { payments } });
 });
 
+export const getPaymentByTran = catchAsync(async (req: Request, res: Response) => {
+  const payment = await service.getPaymentByTranId(req.user!.id, req.params.tranId);
+  return sendSuccess(res, { message: "Payment fetched successfully", data: { payment } });
+});
+
 // SSLCommerz posts x-www-form-urlencoded data to these callback endpoints
 export const paymentSuccess = catchAsync(async (req: Request, res: Response) => {
   const tranId = (req.query.tran_id as string) || req.body.tran_id;

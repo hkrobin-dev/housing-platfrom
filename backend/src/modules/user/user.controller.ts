@@ -79,8 +79,7 @@ export const updateUserRole = catchAsync(async (req: Request, res: Response) => 
 });
 
 // Self profile
-export const getProfile = catchAsync(async (req: Request, res: Response) => {
-  const user = await prisma.user.findUnique({
+export const getProfile = catchAsync(async (req: Request, res: Response) => {  const user = await prisma.user.findUnique({
     where: { id: req.user!.id },
     select: {
       id: true,
@@ -95,4 +94,32 @@ export const getProfile = catchAsync(async (req: Request, res: Response) => {
     },
   });
   return sendSuccess(res, { message: "Profile fetched successfully", data: { user } });
+});
+
+// Self profile update (name / phone / avatar only — role & email are immutable here)
+export const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
+  const { name, phone, avatarUrl } = req.body as {
+    name?: string;
+    phone?: string;
+    avatarUrl?: string;
+  };
+  const user = await prisma.user.update({
+    where: { id: req.user!.id },
+    data: {
+      ...(name !== undefined ? { name } : {}),
+      ...(phone !== undefined ? { phone } : {}),
+      ...(avatarUrl !== undefined ? { avatarUrl } : {}),
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      phone: true,
+      avatarUrl: true,
+      isVerified: true,
+      createdAt: true,
+    },
+  });
+  return sendSuccess(res, { message: "Profile updated successfully", data: { user } });
 });

@@ -177,6 +177,23 @@
           }
         },
         {
+          "name": "Update My Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/users/me",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"phone\": \"+880 1700-000000\",\n  \"avatarUrl\": \"https://res.cloudinary.com/demo/image/upload/avatar.png\"\n}"
+            }
+          }
+        },
+        {
           "name": "List Users (Admin)",
           "request": {
             "method": "GET",
@@ -222,6 +239,49 @@
               "mode": "raw",
               "raw": "{\n  \"role\": \"OWNER\"\n}"
             }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subscriptions",
+      "item": [
+        {
+          "name": "Checkout Plan (SSLCommerz)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/subscriptions/checkout",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plan\": \"OWNER\"\n}"
+            }
+          }
+        },
+        {
+          "name": "My Subscription",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/subscriptions/my"
+          }
+        },
+        {
+          "name": "All Subscriptions (Admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/subscriptions?status=PENDING"
+          }
+        },
+        {
+          "name": "Approve Subscription (Admin)",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/subscriptions/:id/approve"
           }
         }
       ]
@@ -795,6 +855,13 @@
           "request": {
             "method": "GET",
             "url": "{{baseUrl}}/payments/my"
+          }
+        },
+        {
+          "name": "Payment By Transaction",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/payments/by-tran/TXN-xxx"
           }
         },
         {

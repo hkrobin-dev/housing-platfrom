@@ -7,7 +7,7 @@ import { createNotification } from "../notification/notification.service";
 import { sendEmail, paymentConfirmationEmailHtml } from "../../config/email";
 
 interface InitPaymentInput {
-  purpose: "RENT" | "DEPOSIT" | "UTILITY";
+  purpose: "RENT" | "DEPOSIT" | "UTILITY" | "SUBSCRIPTION";
   amount: number;
   userId: string;
   userEmail: string;
@@ -74,6 +74,27 @@ export async function confirmPayment(transactionId: string, valId: string) {
       where: { paymentId: payment.id },
       data: { status: "PAID" },
     });
+    // Activate the plan subscription bought through /subscriptions/checkout
+    const subscription = await prisma.subscription.findUnique({
+      where: { paymentId: payment.id },
+    });
+    if (subscription && subscription.status === "PENDING") {
+      const startDate = new Date();
+      const endDate = new Date(startDate);
+      endDate.setDate(endDate.getDate() + 30);
+      await prisma.subscription.update({
+        where: { id: subscription.id },
+        data: { status: "ACTIVE", startDate, endDate },
+      });
+      // Auto-grant the purchased role: OWNER plan → OWNER, MANAGER plan → MANAGER.
+      // Runs on every verified payment so the buyer never waits on a manual approval.
+      // (Inline here instead of importing subscription.service — that module already
+      // imports this one for checkout, so an import would be circular.)
+      const buyer = await prisma.user.findUnique({ where: { id: payment.userId } });
+      if (buyer && buyer.role !== "ADMIN" && buyer.role !== subscription.plan) {
+        await prisma.user.update({ where: { id: buyer.id }, data: { role: subscription.plan } });
+      }
+    }
   }
 
   await createNotification(
@@ -108,4 +129,20 @@ export async function markPaymentCancelled(transactionId: string) {
 
 export async function listMyPayments(userId: string) {
   return prisma.payment.findMany({ where: { userId }, orderBy: { createdAt: "desc" } });
+}
+
+export async function getPaymentByTranId(userId: string, transactionId: string) {
+  const payment = await prisma.payment.findUnique({
+    where: { transactionId },
+    include: {
+      subscription: true,
+      rentPayment: { include: { lease: { select: { id: true, roomId: true } } } },
+      utilityBillSplit: {
+        include: { utilityBill: { select: { id: true, billType: true, month: true } } },
+      },
+    },
+  });
+  if (!payment) throw ApiError.notFound("Payment record not found");
+  if (payment.userId !== userId) throw ApiError.forbidden("You do not own this payment");
+  return payment;
 }

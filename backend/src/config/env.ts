@@ -17,6 +17,12 @@ export const env = {
   JWT_ACCESS_SECRET: required("JWT_ACCESS_SECRET"),
   JWT_REFRESH_SECRET: required("JWT_REFRESH_SECRET"),
   CLIENT_URL: process.env.CLIENT_URL || "http://localhost:3000",
+  // Extra frontend origins for CORS (comma-separated). Useful when the UI runs on a
+  // non-default port, e.g. CLIENT_EXTRA_ORIGINS=http://localhost:3001
+  CLIENT_EXTRA_ORIGINS: (process.env.CLIENT_EXTRA_ORIGINS || "http://localhost:3001")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean),
   // The backend's own publicly reachable URL — used for payment gateway callbacks
   // (SSLCommerz redirects the browser here first; this route then verifies and
   // forwards on to CLIENT_URL). Defaults to localhost using the same PORT.

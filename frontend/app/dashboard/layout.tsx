@@ -19,11 +19,18 @@ import {
   Receipt,
   Users,
   MailWarning,
+  UserRound,
+  CreditCard,
+  BarChart3,
+  BadgeCheck,
+  TrendingUp,
 } from "lucide-react";
 
 const OWNER_LINKS = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/dashboard/properties", label: "Properties", icon: Building2 },
+  { href: "/dashboard/earnings", label: "Earnings", icon: TrendingUp },
+  { href: "/dashboard/profile", label: "Profile & Settings", icon: UserRound },
 ];
 
 const TENANT_LINKS = [
@@ -32,13 +39,20 @@ const TENANT_LINKS = [
   { href: "/dashboard/leases", label: "My Leases & Rent", icon: Home },
   { href: "/dashboard/viewing-requests", label: "Viewing Requests", icon: FileText },
   { href: "/dashboard/bills", label: "Utility Bills", icon: Receipt },
+  { href: "/dashboard/payments", label: "Payments History", icon: CreditCard },
   { href: "/dashboard/maintenance", label: "Maintenance", icon: Wrench },
   { href: "/dashboard/documents", label: "Documents", icon: FolderOpen },
+  { href: "/dashboard/profile", label: "Profile & Settings", icon: UserRound },
 ];
 
 const COMMON_LINKS = [{ href: "/dashboard/notifications", label: "Notifications", icon: Bell }];
 
-const ADMIN_LINKS = [{ href: "/dashboard/admin/users", label: "Manage Users", icon: Users }];
+const ADMIN_LINKS = [
+  { href: "/dashboard/admin/users", label: "Manage Users", icon: Users },
+  { href: "/dashboard/admin/subscriptions", label: "Plan Requests", icon: BadgeCheck },
+  { href: "/dashboard/admin/reports", label: "Reports", icon: BarChart3 },
+  { href: "/dashboard/profile", label: "Profile & Settings", icon: UserRound },
+];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (

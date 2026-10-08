@@ -5,6 +5,7 @@ import { authenticate } from "../../middlewares/auth.middleware";
 const router = Router();
 
 router.get("/my", authenticate, controller.listMyPayments);
+router.get("/by-tran/:tranId", authenticate, controller.getPaymentByTran);
 
 // Public callback routes — SSLCommerz redirects/posts here directly (no auth header available)
 router.all("/success", controller.paymentSuccess);

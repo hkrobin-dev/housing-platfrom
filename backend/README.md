@@ -1,6 +1,6 @@
 # Housing & Roommate Management Platform — Backend
 
-A complete backend for a housing/roommate marketplace: property & room listings, roommate matching, viewing requests, applications → lease workflow, rent tracking, utility bill splitting, maintenance requests, documents, notifications, and real payment processing via SSLCommerz.
+A complete backend for a housing/roommate marketplace: property & room listings, roommate matching, viewing requests, applications → lease workflow, rent tracking, utility bill splitting, maintenance requests, documents, notifications, plan subscriptions, and real payment processing via SSLCommerz.
 
 ## Tech Stack
 
@@ -22,12 +22,15 @@ npm run dev                  # http://localhost:5000
 > you'd already run a migration, just run one more:
 > `npx prisma migrate dev --name add_password_reset`
 
-## Demo Admin Credentials
+## Demo Credentials (one-click Demo Login on the frontend)
 
-After running `npm run seed`, log in with whatever you set in `.env`:
+After running `npm run seed`, these three accounts exist (or set `ADMIN_EMAIL` /
+`ADMIN_PASSWORD` in `.env` to override the admin):
+
 ```
-ADMIN_EMAIL=admin@housing.com
-ADMIN_PASSWORD=Admin@12345
+ADMIN:  admin@housing.com  / Admin@12345   (or your ADMIN_EMAIL / ADMIN_PASSWORD)
+OWNER:  owner@housing.com  / Owner@12345   (Provider role — lists properties)
+TENANT: tenant@housing.com / Tenant@12345  (User role — browses, applies, pays)
 ```
 
 ## Roles (RBAC)

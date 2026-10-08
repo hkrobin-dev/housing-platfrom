@@ -23,6 +23,7 @@ import maintenanceRoutes from "./modules/maintenance/maintenance.route";
 import documentRoutes from "./modules/document/document.route";
 import notificationRoutes from "./modules/notification/notification.route";
 import paymentRoutes from "./modules/payment/payment.route";
+import subscriptionRoutes from "./modules/subscription/subscription.route";
 import dashboardRoutes from "./modules/dashboard/dashboard.route";
 import assistantRoutes from "./modules/assistant/assistant.route";
 
@@ -30,7 +31,9 @@ const app: Application = express();
 
 // --- Global Middlewares ---
 app.use(helmet());
-app.use(cors({ origin: env.CLIENT_URL, credentials: true }));
+// Allow the primary CLIENT_URL plus any extra dev origins (e.g. :3001).
+// CLIENT_URL itself stays the single canonical URL used for payment redirects + emails.
+app.use(cors({ origin: [env.CLIENT_URL, ...env.CLIENT_EXTRA_ORIGINS], credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -70,6 +73,7 @@ app.use("/api/v1/maintenance", maintenanceRoutes);
 app.use("/api/v1/documents", documentRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/payments", paymentRoutes);
+app.use("/api/v1/subscriptions", subscriptionRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/api/v1/assistant", assistantRoutes);
 

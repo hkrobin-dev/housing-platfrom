@@ -2,11 +2,12 @@ import { Router } from "express";
 import * as userController from "./user.controller";
 import { authenticate, authorize } from "../../middlewares/auth.middleware";
 import { validate } from "../../middlewares/validate";
-import { setBanStatusSchema, updateUserRoleSchema } from "./user.validation";
+import { setBanStatusSchema, updateUserRoleSchema, updateMyProfileSchema } from "./user.validation";
 
 const router = Router();
 
 router.get("/me/profile", authenticate, userController.getProfile);
+router.patch("/me", authenticate, validate(updateMyProfileSchema), userController.updateMyProfile);
 
 // Admin-only endpoints — demonstrates RBAC via authorize()
 router.get("/", authenticate, authorize("ADMIN"), userController.listUsers);

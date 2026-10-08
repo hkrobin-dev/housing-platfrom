@@ -112,6 +112,7 @@ enum PaymentPurpose {
   RENT
   DEPOSIT
   UTILITY
+  SUBSCRIPTION
 }
 
 enum PaymentGateway {
@@ -124,6 +125,18 @@ enum PaymentStatus {
   INITIATED
   SUCCESS
   FAILED
+  CANCELLED
+}
+
+enum SubscriptionPlan {
+  OWNER
+  MANAGER
+}
+
+enum SubscriptionStatus {
+  PENDING
+  ACTIVE
+  EXPIRED
   CANCELLED
 }
 
@@ -169,6 +182,7 @@ model User {
   documents          Document[]
   notifications      Notification[]
   payments           Payment[]
+  subscriptions      Subscription[]
 
   @@index([email])
   @@index([role])
@@ -464,6 +478,26 @@ model Payment {
 
   rentPayment       RentPayment?
   utilityBillSplit  UtilityBillSplit?
+  subscription      Subscription?
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Subscription {
+  id        String             @id @default(uuid())
+  userId    String
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan      SubscriptionPlan
+  amount    Decimal            @db.Decimal(10, 2)
+  status    SubscriptionStatus @default(PENDING)
+  startDate DateTime?
+  endDate   DateTime?
+  paymentId String?            @unique
+  payment   Payment?           @relation(fields: [paymentId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([userId])
   @@index([status])
